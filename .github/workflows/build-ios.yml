@@ -1,0 +1,48 @@
+name: Build Mineradio iOS IPA
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: |
+          npm install
+
+      - name: Sync Capacitor iOS
+        run: |
+          npx cap sync ios
+
+      - name: Build IPA (Unsigned for TrollStore)
+        run: |
+          cd ios/App
+          xcodebuild archive \
+            -project App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -archivePath Mineradio.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            ENTITLEMENTS_REQUIRED=NO
+
+          mkdir -p Payload
+          cp -r Mineradio.xcarchive/Products/Applications/*.app Payload/
+          zip -r Mineradio-iOS.ipa Payload/
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mineradio-iOS
+          path: ios/App/Mineradio-iOS.ipa
