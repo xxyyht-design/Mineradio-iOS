@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Mineradio</title>
   <meta name="referrer" content="no-referrer">
   <link
@@ -14,6 +14,63 @@
   <script src="vendor/gsap.min.js"></script>
   <script src="js/preload-mode.js"></script>
   <link rel="stylesheet" href="css/index.css?v=20260716-we-continuity-vsync">
+
+<!-- iOS Safe Area & Mobile Fixes -->
+<style>
+  :root {
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+  }
+  body {
+    padding-top: var(--sat);
+    padding-bottom: var(--sab);
+    padding-left: var(--sal);
+    padding-right: var(--sar);
+    -webkit-text-size-adjust: none;
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior: none;
+  }
+  input, textarea {
+    font-size: 16px !important;
+  }
+  #desktop-titlebar {
+    padding-top: var(--sat) !important;
+  }
+</style>
+
+
+<!-- iOS Capacitor Detection -->
+<style>
+  /* 默认隐藏桌面元素，由 JS 检测后显示 */
+  body.ios-capacitor #desktop-window-shell {
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  body.ios-capacitor #desktop-titlebar {
+    display: none !important;
+  }
+  body.ios-capacitor .desktop-window-controls {
+    display: none !important;
+  }
+  body.ios-capacitor .desktop-drag-region {
+    display: none !important;
+  }
+  body.ios-capacitor {
+    background: #0a0a12 !important;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (navigator.userAgent.includes('Capacitor') || window.Capacitor) {
+      document.body.classList.add('ios-capacitor');
+    }
+  });
+</script>
+
 </head>
 
 <body>
